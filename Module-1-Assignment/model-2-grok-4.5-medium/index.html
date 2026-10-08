@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nearfield — Forward Deployed Engineers</title>
+  <meta name="description" content="Nearfield embeds forward deployed engineers on your floor to take stalled systems from demo to production, then hand them to your team.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ice: #EAF0F4;
+      --ice-deep: #D7E1EA;
+      --navy: #0C1A2B;
+      --ink: #152536;
+      --steel: #5A6B7D;
+      --lock: #D92B6C;
+      --lock-soft: #F7C2D4;
+      --live: #1F8A70;
+      --line: rgba(12, 26, 43, .14);
+      --display: "Syne", "Arial Narrow", sans-serif;
+      --body: "Source Serif 4", Georgia, serif;
+      --mono: "IBM Plex Mono", ui-monospace, monospace;
+      --wrap: 1120px;
+      --gutter: clamp(18px, 4vw, 36px);
+      --radius: 18px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--ice);
+      color: var(--ink);
+      font: 400 18px/1.55 var(--body);
+      -webkit-font-smoothing: antialiased;
+    }
+    img, svg { display: block; max-width: 100%; }
+    a { color: inherit; }
+    button, input, select, textarea { font: inherit; }
+    :focus-visible { outline: 3px solid var(--lock); outline-offset: 3px; }
+    .skip {
+      position: absolute; left: 12px; top: 12px; z-index: 40;
+      width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);
+      background: var(--lock); color: #fff; padding: 8px 12px; border-radius: 8px;
+    }
+    .skip:focus { width: auto; height: auto; clip: auto; }
+    [id] { scroll-margin-top: 88px; }
+
+    .wrap { width: min(var(--wrap), 100% - 2 * var(--gutter)); margin-inline: auto; }
+    .kicker {
+      margin: 0 0 14px;
+      font: 500 12px/1 var(--mono);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--lock);
+    }
+    h1, h2, h3 { font-family: var(--display); font-weight: 800; letter-spacing: -.04em; margin: 0; }
+    h1 { font-size: clamp(44px, 7.2vw, 84px); line-height: .92; }
+    h2 { font-size: clamp(32px, 4.6vw, 52px); line-height: .98; max-width: 16ch; }
+    h3 { font-size: 22px; line-height: 1.15; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      border: 0; border-radius: 999px; text-decoration: none; cursor: pointer;
+      padding: 14px 22px; font: 700 15px/1 var(--display); letter-spacing: -.02em;
+      transition: transform .15s ease, background .15s ease, color .15s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-lock { background: var(--lock); color: #fff; }
+    .btn-lock:hover { background: #c01f5d; }
+    .btn-ghost { background: transparent; color: inherit; box-shadow: inset 0 0 0 1.5px currentColor; }
+    .btn-ghost:hover { background: rgba(255,255,255,.08); }
+
+    /* Nav */
+    .nav {
+      position: sticky; top: 0; z-index: 30;
+      background: color-mix(in srgb, var(--ice) 88%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-bar { display: flex; align-items: center; justify-content: space-between; min-height: 72px; gap: 16px; }
+    .mark {
+      display: flex; align-items: center; gap: 10px;
+      font: 800 20px/1 var(--display); letter-spacing: -.04em; text-decoration: none;
+    }
+    .mark-rings { width: 28px; height: 28px; }
+    .nav-links { display: flex; align-items: center; gap: 26px; list-style: none; margin: 0; padding: 0; }
+    .nav-links a { font: 500 13px/1 var(--mono); text-decoration: none; letter-spacing: .04em; text-transform: uppercase; }
+    .nav-links a:hover { color: var(--lock); }
+    .menu-btn {
+      display: none; background: none; border: 0; padding: 8px; cursor: pointer;
+      font: 500 12px/1 var(--mono); text-transform: uppercase; letter-spacing: .08em;
+    }
+
+    /* Hero */
+    .hero {
+      background: var(--navy);
+      color: var(--ice);
+      overflow: hidden;
+      position: relative;
+    }
+    .hero::before {
+      content: "";
+      position: absolute; inset: auto -20% -40% auto;
+      width: 70vw; height: 70vw; max-width: 720px; max-height: 720px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(217,43,108,.28), transparent 62%);
+      pointer-events: none;
+    }
+    .hero-grid {
+      display: grid; grid-template-columns: 1.05fr .95fr; gap: 48px;
+      align-items: center; padding: 72px 0 80px; position: relative;
+    }
+    .hero p.lede {
+      max-width: 38ch; color: #c5d2de; margin: 22px 0 28px; font-size: 20px;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .hero-note {
+      margin: 28px 0 0;
+      font: 400 12px/1.5 var(--mono);
+      color: #8ea0b3;
+      max-width: 42ch;
+    }
+
+    .couple {
+      background: color-mix(in srgb, #08131f 78%, #1a3350);
+      border: 1px solid rgba(234,240,244,.12);
+      border-radius: 24px;
+      padding: 22px 22px 18px;
+      box-shadow: 0 30px 80px rgba(0,0,0,.28);
+    }
+    .couple-head, .couple-foot {
+      display: flex; justify-content: space-between; align-items: center;
+      font: 400 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #8ea0b3;
+    }
+    .status { display: inline-flex; align-items: center; gap: 8px; color: var(--lock-soft); }
+    .status i {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--lock);
+      box-shadow: 0 0 0 0 rgba(217,43,108,.6);
+      animation: ping 1.8s ease-out infinite;
+    }
+    @keyframes ping {
+      70% { box-shadow: 0 0 0 8px transparent; }
+      100% { box-shadow: 0 0 0 0 transparent; }
+    }
+    .stage { position: relative; height: 280px; margin: 8px 0 4px; }
+    .coil {
+      position: absolute; top: 50%; width: 168px; height: 168px;
+      transform: translateY(-50%);
+      transition: left .45s cubic-bezier(.2,.7,.2,1);
+    }
+    .coil svg { width: 100%; height: 100%; }
+    .coil-you { left: 6%; }
+    .coil-fde { left: 52%; }
+    .couple.locked .coil-you { left: 16%; }
+    .couple.locked .coil-fde { left: 42%; }
+    .lock-chip {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(.86);
+      opacity: 0; pointer-events: none;
+      background: var(--lock); color: #fff;
+      font: 700 12px/1 var(--display); letter-spacing: .08em; text-transform: uppercase;
+      padding: 10px 14px; border-radius: 999px;
+      transition: opacity .3s ease, transform .3s ease;
+    }
+    .couple.locked .lock-chip { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    .range { appearance: none; width: 100%; height: 4px; background: rgba(234,240,244,.18); border-radius: 4px; margin: 16px 0 10px; }
+    .range::-webkit-slider-thumb {
+      appearance: none; width: 16px; height: 16px; border-radius: 50%;
+      background: var(--lock); cursor: pointer;
+    }
+    .readout { font: 400 12px/1.4 var(--mono); color: #c5d2de; }
+
+    /* Sections */
+    .block { padding: 96px 0; }
+    .split { display: grid; grid-template-columns: .9fr 1.1fr; gap: 56px; align-items: start; }
+    .muted { color: var(--steel); margin: 16px 0 0; max-width: 46ch; }
+
+    .fail-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+    .fail-list li {
+      background: #fff; border-radius: var(--radius); padding: 22px 24px;
+      border: 1px solid var(--line);
+    }
+    .fail-list strong { display: block; font-family: var(--display); font-size: 20px; letter-spacing: -.03em; margin-bottom: 6px; }
+
+    .work-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 40px; }
+    .card {
+      background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 26px;
+      min-height: 220px;
+    }
+    .card .glyph {
+      width: 36px; height: 36px; margin-bottom: 18px; color: var(--lock);
+    }
+    .card p { margin: 10px 0 0; color: var(--steel); font-size: 16px; }
+
+    .method { background: var(--navy); color: var(--ice); }
+    .weeks { list-style: none; margin: 40px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: rgba(234,240,244,.12); border-radius: 20px; overflow: hidden; }
+    .week { background: #102033; padding: 28px 24px 32px; }
+    .week .when { font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--lock-soft); }
+    .week h3 { margin: 14px 0 12px; font-size: 26px; }
+    .week p { margin: 0; color: #c5d2de; font-size: 16px; }
+    .week .out {
+      margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(234,240,244,.12);
+      font: 400 12px/1.5 var(--mono); color: #9fb0c2;
+    }
+
+    .compare-wrap { overflow-x: auto; margin-top: 36px; }
+    table.compare { width: 100%; border-collapse: collapse; min-width: 640px; font-size: 16px; }
+    .compare th, .compare td { text-align: left; padding: 16px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .compare thead th { font: 500 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--steel); }
+    .compare tbody th { font-family: var(--display); font-size: 18px; letter-spacing: -.03em; width: 22%; }
+    .compare td.nf { background: var(--navy); color: var(--ice); }
+    .compare thead th.nf { background: var(--navy); color: var(--lock-soft); border-radius: 12px 12px 0 0; }
+    .compare tbody tr:last-child td.nf { border-radius: 0 0 12px 0; }
+
+    .people { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 40px; }
+    .person { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; }
+    .person .role { font: 500 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--lock); margin-bottom: 10px; }
+    .person p { margin: 10px 0 0; color: var(--steel); }
+
+    .floors {
+      display: flex; flex-wrap: wrap; gap: 10px 18px; margin-top: 28px;
+      font: 400 13px/1 var(--mono); color: var(--steel);
+    }
+    .floors span { display: inline-flex; align-items: center; gap: 8px; }
+    .floors span::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--live); }
+
+    .cta-block { padding-bottom: 110px; }
+    .cta-card {
+      display: grid; grid-template-columns: .9fr 1.1fr; gap: 40px;
+      background: #fff; border: 1px solid var(--line); border-radius: 28px; padding: 36px;
+    }
+    form { display: grid; gap: 14px; }
+    label { display: grid; gap: 6px; font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--steel); }
+    input, select, textarea {
+      width: 100%; border: 1px solid var(--line); border-radius: 12px;
+      padding: 12px 14px; background: var(--ice); color: var(--ink);
+    }
+    textarea { min-height: 110px; resize: vertical; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-msg { font: 400 14px/1.4 var(--body); color: var(--live); min-height: 1.2em; }
+    .form-msg[data-kind="error"] { color: var(--lock); }
+
+    footer {
+      background: var(--navy); color: #9fb0c2;
+      padding: 28px 0; font: 400 12px/1.4 var(--mono);
+    }
+    .foot { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    footer a { color: var(--ice); }
+
+    @media (max-width: 900px) {
+      .hero-grid, .split, .cta-card, .people { grid-template-columns: 1fr; }
+      .work-grid, .weeks { grid-template-columns: 1fr 1fr; }
+      .nav-links { display: none; }
+      .nav-links.open {
+        display: flex; flex-direction: column; align-items: flex-start;
+        position: absolute; left: 0; right: 0; top: 72px;
+        background: var(--ice); padding: 16px var(--gutter) 20px;
+        border-bottom: 1px solid var(--line);
+      }
+      .menu-btn { display: inline-flex; }
+      .hero-grid { padding: 48px 0 56px; }
+      .stage { height: 220px; }
+      .coil { width: 130px; height: 130px; }
+    }
+    @media (max-width: 620px) {
+      .work-grid, .weeks, .form-row { grid-template-columns: 1fr; }
+      h1 { font-size: 40px; }
+      .cta-card { padding: 22px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="nav">
+    <div class="wrap nav-bar">
+      <a class="mark" href="#top" aria-label="Nearfield home">
+        <svg class="mark-rings" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+          <circle cx="14" cy="14" r="11" stroke="#D92B6C" stroke-width="1.4"/>
+          <circle cx="14" cy="14" r="7" stroke="#0C1A2B" stroke-width="1.4"/>
+          <circle cx="14" cy="14" r="2.6" fill="#D92B6C"/>
+        </svg>
+        Nearfield
+      </a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#work">Work</a></li>
+        <li><a href="#method">Method</a></li>
+        <li><a href="#compare">Why us</a></li>
+        <li><a href="#people">People</a></li>
+        <li><a class="btn btn-lock" href="#scout">Request a scout week</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="kicker">Forward deployed engineering</p>
+          <h1>The system ships when you’re close enough to feel it fail.</h1>
+          <p class="lede">Nearfield puts senior engineers on your floor. They sit with operators, close the last mile, and leave a production system your team can run without us in the room.</p>
+          <div class="hero-actions">
+            <a class="btn btn-lock" href="#scout">Request a scout week</a>
+            <a class="btn btn-ghost" href="#method">See a deployment</a>
+          </div>
+          <p class="hero-note">We do not send a slide deck and a junior bench. One or two people, badge on, accountable for a date.</p>
+        </div>
+
+        <aside class="couple" id="couple" aria-label="Near-field coupling demonstration">
+          <div class="couple-head">
+            <span>Coupling range</span>
+            <span class="status"><i></i> <span id="couple-status">Out of range</span></span>
+          </div>
+          <div class="stage">
+            <div class="coil coil-you" id="coil-you">
+              <svg viewBox="0 0 168 168" aria-hidden="true">
+                <circle cx="84" cy="84" r="78" fill="none" stroke="rgba(234,240,244,.18)" stroke-width="1"/>
+                <circle cx="84" cy="84" r="58" fill="none" stroke="rgba(234,240,244,.28)" stroke-width="2"/>
+                <circle cx="84" cy="84" r="38" fill="none" stroke="#EAF0F4" stroke-width="3"/>
+                <circle cx="84" cy="84" r="10" fill="#EAF0F4"/>
+                <text x="84" y="158" text-anchor="middle" fill="#8ea0b3" font-size="11" font-family="IBM Plex Mono">Your floor</text>
+              </svg>
+            </div>
+            <div class="coil coil-fde" id="coil-fde">
+              <svg viewBox="0 0 168 168" aria-hidden="true">
+                <circle cx="84" cy="84" r="78" fill="none" stroke="rgba(217,43,108,.25)" stroke-width="1"/>
+                <circle cx="84" cy="84" r="58" fill="none" stroke="rgba(217,43,108,.45)" stroke-width="2"/>
+                <circle cx="84" cy="84" r="38" fill="none" stroke="#D92B6C" stroke-width="3"/>
+                <circle cx="84" cy="84" r="10" fill="#D92B6C"/>
+                <text x="84" y="158" text-anchor="middle" fill="#F7C2D4" font-size="11" font-family="IBM Plex Mono">FDE desk</text>
+              </svg>
+            </div>
+            <div class="lock-chip" id="lock-chip">Coupled</div>
+          </div>
+          <input class="range" id="range" type="range" min="0" max="100" value="18" aria-label="Bring the engineer closer">
+          <div class="couple-foot">
+            <span class="readout" id="readout">Distance 4.1 m — advice only</span>
+            <span>Drag to embed</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="block" id="problem">
+      <div class="wrap split">
+        <div>
+          <p class="kicker">Why pilots stall</p>
+          <h2>Remote delivery dies in the last ten meters.</h2>
+          <p class="muted">The model works in a notebook. The integration fails on Tuesday at 6am when the warehouse scanner, the SSO group, and the night shift disagree. That gap is not a staffing problem. It is a proximity problem.</p>
+        </div>
+        <ul class="fail-list">
+          <li>
+            <strong>The demo never meets the floor.</strong>
+            Operators keep a shadow spreadsheet because the new tool cannot print a label, handle an exception, or survive a shift change.
+          </li>
+          <li>
+            <strong>The vendor is two time zones away.</strong>
+            Tickets bounce. Context evaporates. Your staff become translators for people who will never sit next to the machine.
+          </li>
+          <li>
+            <strong>Your team is already drowning.</strong>
+            They cannot pause the quarter to productionize someone else’s prototype. So the prototype stays a prototype.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="block" id="work" style="padding-top: 0;">
+      <div class="wrap">
+        <p class="kicker">What we do in the building</p>
+        <h2>Own the last mile. Leave the keys.</h2>
+        <div class="work-grid">
+          <article class="card">
+            <svg class="glyph" viewBox="0 0 36 36" fill="none" aria-hidden="true"><rect x="4" y="8" width="28" height="20" rx="3" stroke="currentColor" stroke-width="2"/><path d="M10 18h16M10 22h10" stroke="currentColor" stroke-width="2"/></svg>
+            <h3>Productionize the stalled system</h3>
+            <p>Auth, data contracts, retries, observability, and the ugly edge cases that only show up beside the operator.</p>
+          </article>
+          <article class="card">
+            <svg class="glyph" viewBox="0 0 36 36" fill="none" aria-hidden="true"><circle cx="12" cy="14" r="5" stroke="currentColor" stroke-width="2"/><circle cx="24" cy="22" r="5" stroke="currentColor" stroke-width="2"/><path d="M16 16l5 4" stroke="currentColor" stroke-width="2"/></svg>
+            <h3>Wire it into the real stack</h3>
+            <p>ERP, warehouse, claims, EHR, or the internal API nobody documented. We read the tickets and the people who file them.</p>
+          </article>
+          <article class="card">
+            <svg class="glyph" viewBox="0 0 36 36" fill="none" aria-hidden="true"><path d="M8 26V10h8l2 4h10v12H8z" stroke="currentColor" stroke-width="2"/><path d="M14 22h8" stroke="currentColor" stroke-width="2"/></svg>
+            <h3>Hand it to your team</h3>
+            <p>Runbooks, ownership, and a paired week so the system still ships after our badge is returned at the desk.</p>
+          </article>
+        </div>
+        <div class="floors">
+          <span>Currently embedded: claims ops, Midwest</span>
+          <span>Port terminal, Gulf Coast</span>
+          <span>Clinical scheduling, Nordics</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="block method" id="method">
+      <div class="wrap">
+        <p class="kicker">A deployment, not a retainer</p>
+        <h2>Four beats. Then we leave.</h2>
+        <p class="muted" style="color:#c5d2de">Order matters. We will not staff a year-long body shop. If the work is not bounded, we decline.</p>
+        <ol class="weeks">
+          <li class="week">
+            <span class="when">Week 0</span>
+            <h3>Scout</h3>
+            <p>One engineer on-site. Map the floor, the data, and the political seams. Write the kill criteria with you.</p>
+            <p class="out">Output: a two-page deployment brief, or a no.</p>
+          </li>
+          <li class="week">
+            <span class="when">Weeks 1–3</span>
+            <h3>Wedge</h3>
+            <p>Ship one path that a real shift can use. No platform rewrite. Prove the coupling before we widen it.</p>
+            <p class="out">Output: production traffic on a thin slice.</p>
+          </li>
+          <li class="week">
+            <span class="when">Weeks 4–8</span>
+            <h3>Harden</h3>
+            <p>Exceptions, auth, monitoring, and the second site. Pair with the people who will own it in a month.</p>
+            <p class="out">Output: on-call notes and owners named.</p>
+          </li>
+          <li class="week">
+            <span class="when">Week 9</span>
+            <h3>Decouple</h3>
+            <p>We step back on purpose. If it cannot run without us, the deployment failed — we stay until it can, or we say so.</p>
+            <p class="out">Output: keys, not a dependency.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="block" id="compare">
+      <div class="wrap">
+        <p class="kicker">Choose the right shape of help</p>
+        <h2>Not a consultancy. Not staff aug.</h2>
+        <div class="compare-wrap">
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>If you hire</th>
+                <th>Strategy firm</th>
+                <th>Staffing vendor</th>
+                <th class="nf">Nearfield FDE</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Where they sit</th>
+                <td>Airport lounge, then slides</td>
+                <td>Your Jira, remote</td>
+                <td class="nf">Your floor, badge on</td>
+              </tr>
+              <tr>
+                <th>What they own</th>
+                <td>A recommendation</td>
+                <td>Tickets you write</td>
+                <td class="nf">A date the system is live</td>
+              </tr>
+              <tr>
+                <th>When they leave</th>
+                <td>After the readout</td>
+                <td>When the SOW hours end</td>
+                <td class="nf">When your team can run it</td>
+              </tr>
+              <tr>
+                <th>You still need</th>
+                <td>Someone to build it</td>
+                <td>Someone who knows the floor</td>
+                <td class="nf">A named owner on your side</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="people" style="padding-top: 0;">
+      <div class="wrap">
+        <p class="kicker">Who walks in</p>
+        <h2>Generalists who can still ship.</h2>
+        <p class="muted">Every Nearfield engineer has shipped production software and survived a messy operator environment. We do not staff new graduates into your most political system.</p>
+        <div class="people">
+          <article class="person">
+            <p class="role">Typical embed</p>
+            <h3>One lead, optional second</h3>
+            <p>The lead owns architecture and the relationship with the floor. The second covers the integration surface — data, identity, or the physical interface — so the lead is not a bottleneck.</p>
+          </article>
+          <article class="person">
+            <p class="role">What we will not do</p>
+            <h3>Hide behind a bench</h3>
+            <p>No bait-and-switch resumes. No offshore shadow team writing the real code. If we cannot name the person before week 0, we do not start.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="block cta-block" id="scout">
+      <div class="wrap">
+        <div class="cta-card">
+          <div>
+            <p class="kicker">Week 0</p>
+            <h2>Request a scout week.</h2>
+            <p class="muted">Tell us what is stalled and where it lives. If we cannot be useful on the floor, we will say no in the first call — not after a six-week discovery.</p>
+          </div>
+          <form id="scout-form" novalidate>
+            <div class="form-row">
+              <label>Name <input name="name" type="text" autocomplete="name" required></label>
+              <label>Work email <input name="email" type="email" autocomplete="email" required></label>
+            </div>
+            <div class="form-row">
+              <label>Company <input name="company" type="text" autocomplete="organization" required></label>
+              <label>Role
+                <select name="role" required>
+                  <option value="">Select</option>
+                  <option>CTO / VP Engineering</option>
+                  <option>Head of Data / AI</option>
+                  <option>COO / Ops</option>
+                  <option>Founder</option>
+                  <option>Other</option>
+                </select>
+              </label>
+            </div>
+            <label>What is stalled, and where does it fail on the floor?
+              <textarea name="stall" required placeholder="e.g. claims triage model never reached adjusters because of SSO and a 20-year document store"></textarea>
+            </label>
+            <button class="btn btn-lock" type="submit">Send scout request</button>
+            <p class="form-msg" id="form-msg" role="status"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap foot">
+      <span>Nearfield FDE · On-site production engineering</span>
+      <span><a href="#scout">Scout week</a> · hello@nearfield.example</span>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var couple = document.getElementById("couple");
+      var range = document.getElementById("range");
+      var status = document.getElementById("couple-status");
+      var readout = document.getElementById("readout");
+      var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      function setRange(value) {
+        var v = Number(value);
+        var meters = (4.8 - v / 100 * 4.5).toFixed(1);
+        var locked = v >= 62;
+        couple.classList.toggle("locked", locked);
+        status.textContent = locked ? "Coupled" : v >= 38 ? "In range" : "Out of range";
+        readout.textContent = locked
+          ? "Distance " + meters + " m — shipping from the floor"
+          : v >= 38
+            ? "Distance " + meters + " m — pairing, not yet live"
+            : "Distance " + meters + " m — advice only";
+      }
+
+      range.addEventListener("input", function () { setRange(range.value); });
+      setRange(range.value);
+
+      if (!reduced) {
+        var dir = 1;
+        setInterval(function () {
+          if (document.activeElement === range) return;
+          var v = Number(range.value) + dir * 1.4;
+          if (v >= 88) dir = -1;
+          if (v <= 12) dir = 1;
+          range.value = String(v);
+          setRange(v);
+        }, 80);
+      }
+
+      var menuBtn = document.querySelector(".menu-btn");
+      var links = document.getElementById("nav-links");
+      menuBtn.addEventListener("click", function () {
+        var open = links.classList.toggle("open");
+        menuBtn.setAttribute("aria-expanded", String(open));
+        menuBtn.textContent = open ? "Close" : "Menu";
+      });
+      links.querySelectorAll("a").forEach(function (a) {
+        a.addEventListener("click", function () {
+          links.classList.remove("open");
+          menuBtn.setAttribute("aria-expanded", "false");
+          menuBtn.textContent = "Menu";
+        });
+      });
+
+      var form = document.getElementById("scout-form");
+      var msg = document.getElementById("form-msg");
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        msg.dataset.kind = "";
+        if (!form.checkValidity()) {
+          msg.dataset.kind = "error";
+          msg.textContent = "Fill every field, including a work email, before we can scout.";
+          form.reportValidity();
+          return;
+        }
+        msg.textContent = "Request received. We reply within two business days with a yes, a no, or a time to walk the floor.";
+        form.reset();
+      });
+    })();
+  </script>
+</body>
+</html>

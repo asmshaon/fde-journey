@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fieldwork — Forward Deployed Engineers</title>
+<meta name="description" content="Fieldwork embeds forward deployed engineers inside your team to take stalled AI and data projects from pilot to production.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Public+Sans:ital,wght@0,400;0,500;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #E4E7DF;
+    --paper-deep: #D5DACD;
+    --spruce: #12302A;
+    --spruce-soft: #2C4A42;
+    --moss: #6B7F6A;
+    --hivis: #F2C230;
+    --rust: #B5482B;
+    --line: rgba(18, 48, 42, .18);
+
+    --display: "Big Shoulders Display", "Arial Narrow", sans-serif;
+    --body: "Public Sans", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+
+    --wrap: 1200px;
+    --gutter: clamp(16px, 4vw, 40px);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--spruce);
+    font: 400 17px/1.6 var(--body);
+    -webkit-font-smoothing: antialiased;
+  }
+  img, svg { display: block; max-width: 100%; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--hivis); outline-offset: 3px; }
+
+  .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 var(--gutter); }
+
+  .eyebrow {
+    font: 500 12px/1 var(--mono);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--moss);
+    display: inline-flex; align-items: center; gap: 10px;
+    margin: 0 0 20px;
+  }
+  .eyebrow::before { content: ""; width: 18px; height: 2px; background: currentColor; }
+
+  h1, h2, h3 { font-family: var(--display); font-weight: 800; line-height: .92; margin: 0; text-transform: uppercase; letter-spacing: .005em; }
+  h2 { font-size: clamp(44px, 6.4vw, 84px); max-width: 14ch; }
+  h3 { font-size: 30px; line-height: 1; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    font: 700 15px/1 var(--body);
+    padding: 16px 22px;
+    border-radius: 4px;
+    text-decoration: none;
+    border: 2px solid var(--spruce);
+    cursor: pointer;
+    transition: transform .15s ease, background .15s ease;
+  }
+  .btn-primary { background: var(--hivis); color: var(--spruce); box-shadow: 4px 4px 0 var(--spruce); }
+  .btn-primary:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--spruce); }
+  .btn-primary:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--spruce); }
+  .btn-ghost { background: transparent; color: var(--spruce); }
+  .btn-ghost:hover { background: var(--paper-deep); }
+
+  /* ---------- Nav ---------- */
+  .nav { position: sticky; top: 0; z-index: 20; background: rgba(228, 231, 223, .92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 24px; }
+  .wordmark { display: flex; align-items: center; gap: 10px; font: 900 26px/1 var(--display); text-transform: uppercase; text-decoration: none; letter-spacing: .02em; }
+  .wordmark svg { width: 26px; height: 26px; }
+  .nav ul { display: flex; gap: 28px; list-style: none; margin: 0; padding: 0; }
+  .nav ul a { font-size: 15px; font-weight: 500; text-decoration: none; }
+  .nav ul a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .nav .btn { padding: 11px 16px; font-size: 14px; box-shadow: 3px 3px 0 var(--spruce); }
+
+  /* ---------- Hero ---------- */
+  .hero { position: relative; overflow: hidden; border-bottom: 2px solid var(--spruce); }
+  .contours { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .contours path { fill: none; stroke: var(--spruce); stroke-opacity: .11; stroke-width: 1; }
+  .contours path.index { stroke-opacity: .2; stroke-width: 1.4; }
+  .hero .wrap { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 56px; padding-top: 88px; padding-bottom: 96px; align-items: center; }
+  .hero h1 { font-size: clamp(54px, 8vw, 112px); font-weight: 900; }
+  .hero h1 mark { background: none; color: inherit; position: relative; white-space: nowrap; }
+  .hero h1 mark::after { content: ""; position: absolute; left: -2%; right: -2%; bottom: .06em; height: .2em; background: var(--hivis); z-index: -1; }
+  .hero .lede { font-size: 20px; max-width: 36ch; margin: 28px 0 36px; color: var(--spruce-soft); }
+  .hero .actions { display: flex; flex-wrap: wrap; gap: 14px; }
+
+  /* Deployment log — the signature */
+  .log {
+    background: var(--spruce);
+    color: var(--paper);
+    border-radius: 6px;
+    box-shadow: 10px 10px 0 var(--hivis);
+    font: 400 13.5px/1.55 var(--mono);
+    overflow: hidden;
+  }
+  .log-head { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border-bottom: 1px solid rgba(228,231,223,.15); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: rgba(228,231,223,.65); }
+  .log-head .live { display: inline-flex; align-items: center; gap: 8px; color: var(--hivis); }
+  .log-head .live::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--hivis); animation: blink 1.6s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: .2; } }
+  .log ol { list-style: none; margin: 0; padding: 18px; min-height: 318px; }
+  .log li { display: grid; grid-template-columns: 62px 1fr; gap: 10px; padding: 6px 0; opacity: 0; transform: translateY(6px); transition: opacity .4s ease, transform .4s ease; }
+  .log li.in { opacity: 1; transform: none; }
+  .log .day { color: var(--hivis); }
+  .log li.ship .msg { color: var(--hivis); font-weight: 500; }
+  .log-foot { padding: 14px 18px 18px; border-top: 1px solid rgba(228,231,223,.15); }
+  .stage { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: rgba(228,231,223,.6); margin-bottom: 8px; }
+  .track { height: 8px; background: rgba(228,231,223,.12); border-radius: 2px; overflow: hidden; }
+  .track span { display: block; height: 100%; width: 0; background: repeating-linear-gradient(-45deg, var(--hivis) 0 8px, #d9a91f 8px 16px); transition: width .6s ease; }
+
+  /* ---------- Sections ---------- */
+  section.block { padding: 120px 0; border-bottom: 1px solid var(--line); }
+  .section-head { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: end; margin-bottom: 64px; }
+  .section-head > p { font-size: 19px; color: var(--spruce-soft); margin: 0; max-width: 46ch; }
+
+  /* Comparison */
+  .compare { width: 100%; border-collapse: collapse; font-size: 16px; }
+  .compare th, .compare td { text-align: left; padding: 20px 18px; border-top: 1px solid var(--line); vertical-align: top; }
+  .compare thead th { font: 500 12px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--moss); border-top: 0; padding-bottom: 14px; }
+  .compare thead td { border-top: 0; }
+  .compare tbody th { font-weight: 700; width: 22%; }
+  .compare td:last-child, .compare th.us { background: var(--spruce); color: var(--paper); }
+  .compare thead th.us { color: var(--hivis); border-radius: 6px 6px 0 0; }
+  .compare tbody tr:last-child td:last-child { border-radius: 0 0 6px 6px; }
+  .compare td:last-child { border-top-color: rgba(228,231,223,.15); }
+  .table-scroll { overflow-x: auto; }
+
+  /* Timeline */
+  .timeline { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 2px solid var(--spruce); }
+  .timeline li { padding: 28px 28px 0 0; position: relative; }
+  .timeline li::before { content: ""; position: absolute; top: -8px; left: 0; width: 14px; height: 14px; background: var(--paper); border: 2px solid var(--spruce); transform: rotate(45deg); }
+  .timeline li:last-child::before { background: var(--hivis); }
+  .timeline .when { font: 500 13px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--rust); display: block; margin-bottom: 14px; }
+  .timeline h3 { margin-bottom: 14px; }
+  .timeline p { margin: 0 0 14px; color: var(--spruce-soft); font-size: 16px; }
+  .timeline .out { font: 400 13px/1.5 var(--mono); color: var(--spruce); border-left: 3px solid var(--hivis); padding-left: 10px; }
+
+  /* Capabilities */
+  .caps { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; background: var(--spruce); border: 2px solid var(--spruce); border-radius: 6px; overflow: hidden; }
+  .cap { background: var(--paper); padding: 36px; }
+  .cap h3 { margin-bottom: 12px; }
+  .cap p { margin: 0 0 18px; color: var(--spruce-soft); }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 0; }
+  .tags li { font: 400 12px/1 var(--mono); padding: 7px 9px; border: 1px solid var(--line); border-radius: 3px; background: var(--paper-deep); }
+
+  /* Field reports */
+  .reports { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .report { border: 2px solid var(--spruce); border-radius: 6px; padding: 28px; display: flex; flex-direction: column; background: var(--paper); }
+  .report .meta { font: 400 12px/1.5 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--moss); display: flex; justify-content: space-between; gap: 12px; padding-bottom: 16px; border-bottom: 1px dashed var(--line); margin-bottom: 20px; }
+  .report h3 { font-size: 26px; margin-bottom: 14px; }
+  .report p { margin: 0 0 24px; color: var(--spruce-soft); font-size: 16px; }
+  .report .result { margin-top: auto; display: flex; align-items: baseline; gap: 12px; }
+  .report .result strong { font: 900 56px/1 var(--display); }
+  .report .result span { font-size: 14px; line-height: 1.35; color: var(--spruce-soft); }
+
+  /* Engagements */
+  .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: stretch; }
+  .plan { border: 2px solid var(--spruce); border-radius: 6px; padding: 32px; display: flex; flex-direction: column; }
+  .plan.featured { background: var(--spruce); color: var(--paper); box-shadow: 10px 10px 0 var(--hivis); }
+  .plan .dur { font: 500 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--moss); }
+  .plan.featured .dur { color: var(--hivis); }
+  .plan h3 { margin: 14px 0 10px; }
+  .plan .price { font: 800 40px/1 var(--display); margin: 18px 0 4px; }
+  .plan .price small { font: 400 14px/1 var(--body); opacity: .7; }
+  .plan p { margin: 0; font-size: 16px; opacity: .85; }
+  .plan ul { list-style: none; padding: 0; margin: 24px 0 32px; font-size: 15px; }
+  .plan ul li { padding: 9px 0 9px 24px; border-top: 1px solid var(--line); position: relative; }
+  .plan.featured ul li { border-top-color: rgba(228,231,223,.15); }
+  .plan ul li::before { content: ""; position: absolute; left: 0; top: 16px; width: 10px; height: 2px; background: var(--rust); }
+  .plan.featured ul li::before { background: var(--hivis); }
+  .plan .btn { margin-top: auto; justify-content: center; }
+  .plan.featured .btn-ghost { border-color: var(--paper); color: var(--paper); }
+  .plan.featured .btn-ghost:hover { background: var(--spruce-soft); }
+
+  /* FAQ */
+  .faq { max-width: 860px; }
+  .faq details { border-top: 1px solid var(--line); }
+  .faq details:last-child { border-bottom: 1px solid var(--line); }
+  .faq summary { list-style: none; cursor: pointer; padding: 24px 40px 24px 0; font-weight: 700; font-size: 19px; position: relative; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; position: absolute; right: 4px; top: 50%; transform: translateY(-50%); font: 400 28px/1 var(--mono); color: var(--rust); }
+  .faq details[open] summary::after { content: "–"; }
+  .faq details p { margin: 0 0 24px; max-width: 64ch; color: var(--spruce-soft); }
+
+  /* Contact */
+  .contact { background: var(--spruce); color: var(--paper); padding: 120px 0; position: relative; overflow: hidden; }
+  .contact .contours path { stroke: var(--paper); stroke-opacity: .07; }
+  .contact .contours path.index { stroke-opacity: .12; }
+  .contact .wrap { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+  .contact .eyebrow { color: var(--hivis); }
+  .contact h2 { max-width: 11ch; }
+  .contact .intro > p:not(.eyebrow) { font-size: 19px; color: rgba(228,231,223,.8); max-width: 40ch; margin: 28px 0 0; }
+  .contact form { background: var(--paper); color: var(--spruce); border-radius: 6px; padding: 32px; box-shadow: 10px 10px 0 var(--hivis); }
+  .field { margin-bottom: 18px; }
+  .field label { display: block; font-weight: 700; font-size: 14px; margin-bottom: 6px; }
+  .field input, .field textarea, .field select {
+    width: 100%; font: 400 16px/1.4 var(--body); color: var(--spruce);
+    padding: 12px 14px; border: 2px solid var(--spruce); border-radius: 4px; background: #F1F3EE;
+  }
+  .field textarea { min-height: 110px; resize: vertical; }
+  .field .err { display: none; color: var(--rust); font-size: 13px; margin-top: 6px; }
+  .field.invalid input, .field.invalid textarea { border-color: var(--rust); }
+  .field.invalid .err { display: block; }
+  .form-note { font-size: 13px; color: var(--moss); margin: 14px 0 0; }
+  .sent { display: none; }
+  form.done .fields { display: none; }
+  form.done .sent { display: block; }
+  .sent h3 { margin-bottom: 12px; }
+  .sent p { margin: 0; color: var(--spruce-soft); }
+
+  footer { background: var(--spruce); color: rgba(228,231,223,.7); border-top: 1px solid rgba(228,231,223,.15); font-size: 14px; }
+  footer .wrap { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-top: 28px; padding-bottom: 28px; flex-wrap: wrap; }
+  footer .wordmark { color: var(--paper); font-size: 22px; }
+  footer .coords { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 960px) {
+    .hero .wrap, .section-head, .contact .wrap { grid-template-columns: 1fr; }
+    .hero .wrap { padding-top: 56px; padding-bottom: 72px; gap: 48px; }
+    .timeline { grid-template-columns: repeat(2, 1fr); row-gap: 48px; border-top: 0; }
+    .timeline li { border-top: 2px solid var(--spruce); }
+    .reports, .plans { grid-template-columns: 1fr; }
+    .plan.featured { order: -1; }
+    section.block, .contact { padding: 80px 0; }
+    .section-head { margin-bottom: 44px; gap: 20px; }
+  }
+  @media (max-width: 720px) {
+    .nav ul { display: none; }
+    .caps { grid-template-columns: 1fr; }
+    .cap { padding: 28px 24px; }
+    .timeline { grid-template-columns: 1fr; }
+    .hero .lede { font-size: 18px; }
+    .log { box-shadow: 6px 6px 0 var(--hivis); font-size: 12.5px; }
+    .log li { grid-template-columns: 54px 1fr; }
+    .compare { min-width: 620px; }
+    .contact form, .plan.featured { box-shadow: 6px 6px 0 var(--hivis); }
+    .contact form { padding: 24px; }
+  }
+  @media (max-width: 420px) {
+    .nav .btn { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .log li { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Main">
+  <div class="wrap">
+    <a href="#top" class="wordmark" aria-label="Fieldwork home">
+      <svg viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="1" width="24" height="24" rx="3" fill="#F2C230" stroke="#12302A" stroke-width="2"/><path d="M5 18 L11 9 L15 14 L18 10 L21 18 Z" fill="#12302A"/></svg>
+      Fieldwork
+    </a>
+    <ul>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#work">Field reports</a></li>
+      <li><a href="#engagements">Engagements</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a href="#contact" class="btn btn-primary">Book a scoping call</a>
+  </div>
+</nav>
+
+<main id="top">
+
+  <!-- Hero -->
+  <header class="hero">
+    <svg class="contours" data-contours data-cx="0.78" data-cy="0.45" aria-hidden="true"></svg>
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">Forward deployed engineering</p>
+        <h1>We send engineers to sit next to <mark>your problem.</mark></h1>
+        <p class="lede">Fieldwork embeds senior engineers inside your team to take stalled AI and data projects from pilot to production — in your stack, with your people, in weeks.</p>
+        <div class="actions">
+          <a href="#contact" class="btn btn-primary">Book a scoping call →</a>
+          <a href="#how" class="btn btn-ghost">See how an engagement runs</a>
+        </div>
+      </div>
+
+      <figure class="log" aria-label="Example deployment log from a freight logistics engagement" style="margin:0">
+        <div class="log-head">
+          <span>Deployment log · freight ops</span>
+          <span class="live">On site</span>
+        </div>
+        <ol id="log">
+          <li><span class="day">Day 01</span><span class="msg">Badge issued. Shadowing the dispatch desk, 6am shift.</span></li>
+          <li><span class="day">Day 03</span><span class="msg">Found it: 40% of exceptions are re-keyed by hand from carrier emails.</span></li>
+          <li><span class="day">Day 09</span><span class="msg">Read-only access to TMS. First extraction run on 2,000 real emails.</span></li>
+          <li><span class="day">Day 17</span><span class="msg">Eval set agreed with dispatch leads. Accuracy 94.1%.</span></li>
+          <li><span class="day">Day 26</span><span class="msg">Shadow mode: agent drafts, humans approve. 3 edge cases fixed.</span></li>
+          <li class="ship"><span class="day">Day 38</span><span class="msg">In production. 61% of exceptions handled end-to-end.</span></li>
+        </ol>
+        <div class="log-foot">
+          <div class="stage"><span>Pilot</span><span>Shadow</span><span>Production</span></div>
+          <div class="track"><span id="track"></span></div>
+        </div>
+      </figure>
+    </div>
+  </header>
+
+  <!-- Why -->
+  <section class="block" aria-labelledby="why-title">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Why forward deployed</p>
+          <h2 id="why-title">Most pilots die in the handoff.</h2>
+        </div>
+        <p>The demo worked. Then it met your real data, your permissions model and the people who have to use it on Monday morning. That gap is where we work.</p>
+      </div>
+      <div class="table-scroll">
+        <table class="compare">
+          <thead>
+            <tr>
+              <td></td>
+              <th scope="col">Consultancy</th>
+              <th scope="col">Software vendor</th>
+              <th scope="col" class="us">Fieldwork</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">What you get</th><td>A strategy deck</td><td>A login</td><td>Working software in production</td></tr>
+            <tr><th scope="row">Where they work</th><td>In workshops</td><td>In their own product</td><td>In your codebase and your ops floor</td></tr>
+            <tr><th scope="row">Who they talk to</th><td>Executives</td><td>Your admin</td><td>The people doing the work</td></tr>
+            <tr><th scope="row">When they leave</th><td>The project stalls</td><td>You file tickets</td><td>Your team owns and runs it</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- How -->
+  <section class="block" id="how" aria-labelledby="how-title">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">How an engagement runs</p>
+          <h2 id="how-title">From first call to handover.</h2>
+        </div>
+        <p>A typical engagement takes 8 to 12 weeks. Every phase ends with something you can check, so you always know if it's working.</p>
+      </div>
+      <ol class="timeline">
+        <li>
+          <span class="when">Week 0</span>
+          <h3>Scope</h3>
+          <p>We talk with the people who own the problem and the people who live with it. Then we pick one workflow where shipping would make a measurable difference.</p>
+          <div class="out">You get: a one-page plan with a success metric</div>
+        </li>
+        <li>
+          <span class="when">Weeks 1–2</span>
+          <h3>Embed</h3>
+          <p>Engineers join your standups, your Slack and your repos. We shadow the work, get access to real data and build an eval set with your experts.</p>
+          <div class="out">You get: a baseline and a first prototype on real data</div>
+        </li>
+        <li>
+          <span class="when">Weeks 3–8</span>
+          <h3>Build</h3>
+          <p>We ship to production behind a shadow mode first, then expand as the numbers hold. Weekly demos to whoever wants to see them.</p>
+          <div class="out">You get: a live system, monitored against the metric</div>
+        </li>
+        <li>
+          <span class="when">Weeks 9+</span>
+          <h3>Hand over</h3>
+          <p>Your engineers take the pager. We pair on fixes, write the runbook and stay on call for 30 days after we leave.</p>
+          <div class="out">You get: a system your team owns outright</div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Capabilities -->
+  <section class="block" aria-labelledby="caps-title">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">What we deploy</p>
+          <h2 id="caps-title">Built into what you already run.</h2>
+        </div>
+        <p>We don't bring a platform you have to adopt. We work in your cloud, your languages and your security boundary.</p>
+      </div>
+      <div class="caps">
+        <article class="cap">
+          <h3>AI workflows on your data</h3>
+          <p>Agents and LLM pipelines that read your documents, tickets and emails, then act inside your existing tools — with a human approving where it matters.</p>
+          <ul class="tags"><li>Retrieval</li><li>Agents</li><li>Document extraction</li></ul>
+        </article>
+        <article class="cap">
+          <h3>Integrations with legacy systems</h3>
+          <p>The ERP from 2009, the mainframe export, the vendor portal with no API. We connect them so the new system can actually do the job.</p>
+          <ul class="tags"><li>ERP &amp; TMS</li><li>SFTP &amp; EDI</li><li>Browser automation</li></ul>
+        </article>
+        <article class="cap">
+          <h3>Evaluation and monitoring</h3>
+          <p>Eval sets written with your domain experts, regression tests on every change, and dashboards that tell you when quality drifts.</p>
+          <ul class="tags"><li>Eval harnesses</li><li>Observability</li><li>Cost tracking</li></ul>
+        </article>
+        <article class="cap">
+          <h3>Tools for operations teams</h3>
+          <p>Review queues, approval screens and admin consoles your operators will open every day, designed by watching them work.</p>
+          <ul class="tags"><li>Internal apps</li><li>Review UIs</li><li>Access control</li></ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Field reports -->
+  <section class="block" id="work" aria-labelledby="work-title">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Field reports</p>
+          <h2 id="work-title">What shipped, and what it changed.</h2>
+        </div>
+        <p>Clients stay anonymous by default. Ask on the call and we'll introduce you to one in your industry.</p>
+      </div>
+      <div class="reports">
+        <article class="report">
+          <div class="meta"><span>Freight logistics</span><span>38 days</span></div>
+          <h3>Carrier exception handling</h3>
+          <p>An agent reads carrier emails, updates the TMS and flags only the cases a dispatcher needs to decide.</p>
+          <div class="result"><strong>61%</strong><span>of exceptions handled without a human touch</span></div>
+        </article>
+        <article class="report">
+          <div class="meta"><span>Regional insurer</span><span>10 weeks</span></div>
+          <h3>Claims intake triage</h3>
+          <p>Incoming claims are classified, checked against policy terms and routed to the right adjuster with a summary attached.</p>
+          <div class="result"><strong>4.2×</strong><span>faster from first notice to adjuster assignment</span></div>
+        </article>
+        <article class="report">
+          <div class="meta"><span>Industrial manufacturer</span><span>12 weeks</span></div>
+          <h3>Maintenance knowledge search</h3>
+          <p>Technicians ask questions on the shop floor and get answers drawn from 30 years of manuals and repair logs.</p>
+          <div class="result"><strong>−27%</strong><span>mean time to repair on covered equipment</span></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Engagements -->
+  <section class="block" id="engagements" aria-labelledby="eng-title">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Engagements</p>
+          <h2 id="eng-title">Start small. Stay as long as it pays.</h2>
+        </div>
+        <p>Every engagement starts with a fixed-price scoping sprint. If we can't name a metric we'll move, we'll tell you and stop there.</p>
+      </div>
+      <div class="plans">
+        <article class="plan">
+          <span class="dur">2 weeks · fixed price</span>
+          <h3>Scoping sprint</h3>
+          <p>One engineer on site to find the workflow worth fixing and prove it on your data.</p>
+          <div class="price">$18k</div>
+          <ul>
+            <li>Workflow and data audit</li>
+            <li>Working prototype on real data</li>
+            <li>Build plan with a success metric</li>
+          </ul>
+          <a href="#contact" class="btn btn-ghost">Start with scoping</a>
+        </article>
+        <article class="plan featured">
+          <span class="dur">8–12 weeks · monthly</span>
+          <h3>Embedded pod</h3>
+          <p>Two or three engineers inside your team, shipping to production.</p>
+          <div class="price">From $65k <small>/ month</small></div>
+          <ul>
+            <li>Everything in scoping</li>
+            <li>Production deployment and monitoring</li>
+            <li>Weekly demos and metric reports</li>
+            <li>Handover with 30 days on call</li>
+          </ul>
+          <a href="#contact" class="btn btn-primary">Book a scoping call</a>
+        </article>
+        <article class="plan">
+          <span class="dur">Ongoing · quarterly</span>
+          <h3>Field retainer</h3>
+          <p>One engineer on call for your team after handover, or across several projects.</p>
+          <div class="price">From $24k <small>/ month</small></div>
+          <ul>
+            <li>Up to 2 days per week embedded</li>
+            <li>Eval and model upgrades</li>
+            <li>Architecture reviews for new projects</li>
+          </ul>
+          <a href="#contact" class="btn btn-ghost">Ask about retainers</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="block" id="faq" aria-labelledby="faq-title">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Questions</p>
+          <h2 id="faq-title">Before you book.</h2>
+        </div>
+      </div>
+      <div class="faq">
+        <details>
+          <summary>What is a forward deployed engineer?</summary>
+          <p>A senior software engineer who works inside a customer's organisation instead of from a vendor's office. They write production code, but they also sit with operators, untangle access and data problems, and decide what to build based on what they see. It's part engineer, part consultant, and accountable for the result.</p>
+        </details>
+        <details>
+          <summary>Do your engineers need to be on site?</summary>
+          <p>For the first two weeks, we strongly prefer it — that's when we learn how the work really happens. After that, most teams settle on one or two days on site and the rest remote. Fully remote engagements are possible if your team is remote too.</p>
+        </details>
+        <details>
+          <summary>Who owns the code?</summary>
+          <p>You do, from the first commit. Everything lives in your repositories and runs in your cloud accounts. We don't license a platform back to you.</p>
+        </details>
+        <details>
+          <summary>How do you handle security and data access?</summary>
+          <p>We work inside your security boundary under your policies, with named engineers, least-privilege access and your audit logging. We sign your NDA and DPA, and can go through your vendor security review before day one.</p>
+        </details>
+        <details>
+          <summary>Which models and tools do you use?</summary>
+          <p>Whatever fits your constraints. We regularly ship with the major hosted model providers and open-weight models running in your own cloud, and we choose based on your evals, latency and cost — not a partnership.</p>
+        </details>
+        <details>
+          <summary>What happens if the project isn't working?</summary>
+          <p>Every phase has a metric agreed up front. If we miss it, we'll tell you in the weekly demo, explain why, and recommend whether to change course or stop. Monthly engagements can be ended with 30 days' notice.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="contact" id="contact" aria-labelledby="contact-title">
+    <svg class="contours" data-contours data-cx="0.15" data-cy="0.8" aria-hidden="true"></svg>
+    <div class="wrap">
+      <div class="intro">
+        <p class="eyebrow">Book a scoping call</p>
+        <h2 id="contact-title">Tell us what's stuck.</h2>
+        <p>A 30-minute call with an engineer, not a salesperson. We'll ask about the workflow, the data and who uses it — and tell you honestly whether an embedded team is the right fix.</p>
+      </div>
+
+      <form id="contact-form" novalidate>
+        <div class="fields">
+          <div class="field">
+            <label for="name">Your name</label>
+            <input id="name" name="name" autocomplete="name" required>
+            <div class="err">Enter your name.</div>
+          </div>
+          <div class="field">
+            <label for="email">Work email</label>
+            <input id="email" name="email" type="email" autocomplete="email" required>
+            <div class="err">Enter a valid work email, like name@company.com.</div>
+          </div>
+          <div class="field">
+            <label for="company">Company</label>
+            <input id="company" name="company" autocomplete="organization">
+          </div>
+          <div class="field">
+            <label for="stuck">What's stuck?</label>
+            <textarea id="stuck" name="stuck" placeholder="e.g. Our claims summarisation pilot works in demos but nobody trusts it with real cases." required></textarea>
+            <div class="err">Add a sentence or two about the project.</div>
+          </div>
+          <button type="submit" class="btn btn-primary">Book a scoping call →</button>
+          <p class="form-note">We reply within one working day.</p>
+        </div>
+        <div class="sent" role="status" aria-live="polite">
+          <h3>Request sent.</h3>
+          <p>Thanks — an engineer will email you within one working day with times for a call.</p>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a href="#top" class="wordmark">Fieldwork</a>
+    <span class="coords">Forward deployed engineering · Est. 2024</span>
+    <span>© 2026 Fieldwork</span>
+  </div>
+</footer>
+
+<script>
+  // Topographic contours: concentric, noisy rings around a summit point
+  document.querySelectorAll('[data-contours]').forEach(function (svg) {
+    var W = 1600, H = 1000;
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+    var cx = W * parseFloat(svg.dataset.cx), cy = H * parseFloat(svg.dataset.cy);
+    var ns = 'http://www.w3.org/2000/svg', out = '';
+    for (var k = 1; k <= 22; k++) {
+      var r = 38 * k, pts = [];
+      for (var i = 0; i < 72; i++) {
+        var a = i / 72 * Math.PI * 2;
+        var wob = Math.sin(a * 3 + k * .35) * (8 + k * 2.2) + Math.cos(a * 5 - k * .5) * (4 + k);
+        var rr = r + wob;
+        pts.push([cx + Math.cos(a) * rr * 1.25, cy + Math.sin(a) * rr * .85]);
+      }
+      var d = 'M' + pts[0][0].toFixed(1) + ' ' + pts[0][1].toFixed(1);
+      for (var j = 1; j <= pts.length; j++) {
+        var p = pts[j % pts.length], q = pts[(j - 1) % pts.length];
+        var mx = (p[0] + q[0]) / 2, my = (p[1] + q[1]) / 2;
+        d += ' Q' + q[0].toFixed(1) + ' ' + q[1].toFixed(1) + ' ' + mx.toFixed(1) + ' ' + my.toFixed(1);
+      }
+      out += '<path d="' + d + 'Z"' + (k % 5 === 0 ? ' class="index"' : '') + '/>';
+    }
+    svg.innerHTML = out;
+  });
+
+  // Deployment log: reveal entries one by one, advance the stage bar
+  (function () {
+    var items = document.querySelectorAll('#log li');
+    var track = document.getElementById('track');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) {
+      items.forEach(function (li) { li.classList.add('in'); });
+      track.style.width = '100%';
+      return;
+    }
+    items.forEach(function (li, i) {
+      setTimeout(function () {
+        li.classList.add('in');
+        track.style.width = Math.round((i + 1) / items.length * 100) + '%';
+      }, 500 + i * 750);
+    });
+  })();
+
+  // Contact form: client-side validation and confirmation
+  (function () {
+    var form = document.getElementById('contact-form');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var firstBad = null;
+      ['name', 'email', 'stuck'].forEach(function (id) {
+        var input = document.getElementById(id);
+        var ok = input.value.trim() !== '' && (id !== 'email' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim()));
+        input.closest('.field').classList.toggle('invalid', !ok);
+        input.setAttribute('aria-invalid', String(!ok));
+        if (!ok && !firstBad) firstBad = input;
+      });
+      if (firstBad) { firstBad.focus(); return; }
+      form.classList.add('done');
+    });
+  })();
+</script>
+</body>
+</html>
